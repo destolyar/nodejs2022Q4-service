@@ -1,8 +1,8 @@
+import db from "src/database/db";
 import { Injectable } from "@nestjs/common";
 import { CreateUserDto, UpdatePasswordDto } from "./dto";
 import { UserInterface } from "./usersInterface";
-import db from "src/database/db";
-import {v4 as uuidv4} from "uuid"
+import { v4 as uuidv4 } from "uuid"
 
 @Injectable()
 export class UsersService {
@@ -30,10 +30,10 @@ export class UsersService {
 
     return userForInsert
   }
-  
-  updateUserPassword(updatePassworDto: UpdatePasswordDto, userId: string, user: UserInterface) {            
+
+  updateUserPassword(updatePassworDto: UpdatePasswordDto, userId: string, user: UserInterface) {
     const isOldPasswordCorrect = updatePassworDto.oldPassword === user.password
-    if(!isOldPasswordCorrect) {
+    if (!isOldPasswordCorrect) {
       return null
     }
 

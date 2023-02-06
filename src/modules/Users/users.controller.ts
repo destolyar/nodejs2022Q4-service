@@ -1,9 +1,8 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Request, Response, response } from 'express';
+import { Response } from 'express';
 import { CreateUserDto, UpdatePasswordDto } from './dto';
 import { validate as uuidValidate } from 'uuid'
-import db from 'src/database/db';
 
 @Controller('user')
 export class UsersController {
@@ -19,7 +18,7 @@ export class UsersController {
   @Get(':id')
   getUserById(@Param() params, @Res() response: Response) {
     const userId = params.id
-    
+
     const isValidId = uuidValidate(userId)
     if (!isValidId) {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
@@ -36,7 +35,7 @@ export class UsersController {
   @Post('/')
   createUser(@Body() createUserDto: CreateUserDto, @Res() response: Response) {
     const createdUser = this.usersService.createUser(createUserDto)
-    const userWithoutPassword = {...createdUser}
+    const userWithoutPassword = { ...createdUser }
     delete userWithoutPassword.password
 
     response.json(userWithoutPassword)
@@ -60,7 +59,7 @@ export class UsersController {
     if (!updatedUser) {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
-    const userWithoutPassword = {...updatedUser}
+    const userWithoutPassword = { ...updatedUser }
     delete userWithoutPassword.password
 
     response.json(userWithoutPassword)
