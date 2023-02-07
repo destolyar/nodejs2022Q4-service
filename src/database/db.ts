@@ -14,20 +14,32 @@ export class db {
 
   constructor() {
     this.db = {
-      albums: [],
-      artists: [],
-      favorites: [],
-      tracks: [
-        { albumId: "", artistId: "", duration: 23, id: "id", name: "Some name" },
-        { albumId: "", artistId: "", duration: 23, id: "id", name: "Some name" },
-        { albumId: "", artistId: "", duration: 23, id: "id", name: "Some name" },
-        { albumId: "", artistId: "", duration: 23, id: "id", name: "Some name" },
-        { albumId: "", artistId: "", duration: 23, id: "id", name: "Some name" },
-        { albumId: "", artistId: "", duration: 23, id: "id", name: "Some name" }
-      ],
+      albums: [{
+        id: "some id",
+        artistId: null,
+        name: "some name",
+        year: 2023
+      }],
+      artists: [{
+        grammy: null,
+        id: "some id",
+        name: "Some name"
+      }],
+      favorites: [{
+        albums: null,
+        artists: null, 
+        tracks: null
+      }],
+      tracks: [{
+        albumId: null,
+        artistId: null,
+        duration: 2,
+        id: "some id",
+        name: "some name"
+      }],
       users: [{
         createdAt: 23,
-        id: "jopa",
+        id: "some wring id",
         login: "Super login",
         password: "Super password",
         updatedAt: 123,

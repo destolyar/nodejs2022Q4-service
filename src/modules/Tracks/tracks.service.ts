@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
 import db from "src/database/db";
+import { Injectable } from "@nestjs/common";
 import { CreateTrackDto, UpdateTrackDto } from "./dto";
 import { v4 as uuidv4 } from "uuid"
 import { TrackInterface } from "./tracksInterface";
@@ -26,7 +26,7 @@ export class TracksService {
     }
 
     db.insertOne("tracks", track)
-    console.log(track)
+
     return track
   }
 
@@ -35,7 +35,7 @@ export class TracksService {
       ...track,
       ...updateTrackDto
     }
-    db.rewriteOne("users", updatedTrack, trackId)
+    db.rewriteOne("tracks", updatedTrack, trackId)
 
     return updatedTrack
   }

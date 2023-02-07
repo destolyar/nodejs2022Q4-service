@@ -39,7 +39,7 @@ export class TracksController {
   }
 
   @Put(':id')
-  updateTrack(@Body() updatePasswordDto: UpdateTrackDto, @Param() params, @Res() response: Response) {
+  updateTrack(@Body() updateTrackDto: UpdateTrackDto, @Param() params, @Res() response: Response) {
     const trackId = params.id
 
     const isValidId = uuidValidate(trackId)
@@ -52,7 +52,7 @@ export class TracksController {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    const updatedTrack = this.tracksService.updateTrack(updatePasswordDto, trackId, track)
+    const updatedTrack = this.tracksService.updateTrack(updateTrackDto, trackId, track)
     if (!updatedTrack) {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
