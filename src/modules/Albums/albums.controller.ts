@@ -16,7 +16,7 @@ export class AlbumsController {
   }
 
   @Get(':id')
-  getAlbumById(@Param() params, @Res() response: Response) {
+  getUserById(@Param() params, @Res() response: Response) {
     const albumId = params.id
 
     const isValidId = uuidValidate(albumId)
