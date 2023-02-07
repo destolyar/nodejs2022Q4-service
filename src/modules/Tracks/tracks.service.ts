@@ -16,8 +16,8 @@ export class TracksService {
   }
 
   createTrack(createTrackDto: CreateTrackDto) {
-    const artistId = createTrackDto.albumId && null
-    const albumId = createTrackDto.artistId && null
+    const artistId = createTrackDto.artistId
+    const albumId = createTrackDto.albumId
     const track = {
       id: uuidv4(),
       ...createTrackDto,

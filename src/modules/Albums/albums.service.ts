@@ -3,6 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { CreateAlbumDto, UpdateAlbumDto } from "./dto";
 import { v4 as uuidv4 } from "uuid"
 import { AlbumInterface } from "./albumsInterface";
+import { TrackInterface } from "../Tracks/tracksInterface";
 
 @Injectable()
 export class AlbumsService {
@@ -19,7 +20,7 @@ export class AlbumsService {
     const album = {
       id: uuidv4(),
       ...createAlbumDto,
-      artistId: createAlbumDto.artistId && null,
+      artistId: createAlbumDto.artistId,
     }
 
     db.insertOne("albums", album)
@@ -39,7 +40,11 @@ export class AlbumsService {
   }
 
   deleteAlbumById(albumId) {
-    const deletedAlbum = db.deleteOne("albums", albumId)
-    return deletedAlbum
+    db.deleteOne("albums", albumId)
+    const album = db.findOne("albums", "id", albumId)
+    const tracks: TrackInterface[] = db.findMany("tracks").filter((track: TrackInterface) => track.albumId === albumId)
+    tracks.forEach(track => track.albumId = null)
+
+    return album
   }
 }

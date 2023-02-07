@@ -1,5 +1,6 @@
 import { AlbumInterface } from "src/modules/Albums/albumsInterface";
 import { ArtistInterface } from "src/modules/Artists/artiststInterface";
+import { FavoritesInterface } from "src/modules/Favorites/favoritesInterface";
 import { TrackInterface } from "src/modules/Tracks/tracksInterface";
 import { UserInterface } from "src/modules/Users/usersInterface";
 
@@ -7,7 +8,9 @@ export class db {
   db: {
     albums: AlbumInterface[];
     artists: ArtistInterface[];
-    favorites: FavoritesInterface[];
+    favTracks: TrackInterface[];
+    favArtists: ArtistInterface[];
+    favAlbums: AlbumInterface[];
     tracks: TrackInterface[];
     users: UserInterface[];
   }
@@ -25,11 +28,9 @@ export class db {
         id: "some id",
         name: "Some name"
       }],
-      favorites: [{
-        albums: null,
-        artists: null, 
-        tracks: null
-      }],
+      favAlbums: [],
+      favArtists: [],
+      favTracks: [],
       tracks: [{
         albumId: null,
         artistId: null,
