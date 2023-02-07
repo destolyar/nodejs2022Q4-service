@@ -28,9 +28,30 @@ export class db {
         id: "some id",
         name: "Some name"
       }],
-      favAlbums: [],
-      favArtists: [],
-      favTracks: [],
+      favAlbums: [
+        {
+          id: "some id",
+          artistId: null,
+          name: "some name",
+          year: 2023
+        }
+      ],
+      favArtists: [
+        {
+          grammy: null,
+          id: "some id",
+          name: "Some name"
+        }
+      ],
+      favTracks: [
+        {
+          albumId: null,
+          artistId: null,
+          duration: 2,
+          id: "some id",
+          name: "some name"
+        }
+      ],
       tracks: [{
         albumId: null,
         artistId: null,

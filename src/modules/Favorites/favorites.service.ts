@@ -40,13 +40,12 @@ export class FavoritesService {
   }
 
   deleteFromFavs(itemId: string, collection: string) {
-    const findedItem = db.findMany(collection).find(item => item.id === itemId)
+    const findedItem = db.findOne(collection, "id", itemId)
     if (!findedItem) {
       return null
     }
 
     db.deleteOne(collection, itemId)
-    console.log(findedItem)
     return findedItem
   }
 }

@@ -45,6 +45,12 @@ export class ArtistsService {
     const tracks = db.findMany("tracks").filter((track: TrackInterface) => track.artistId === artistId)
     tracks.forEach(track => track.artistId = null)
 
+    const favoriteTracks = db.findMany("favTracks").filter((track: TrackInterface) => track.artistId === artistId)
+    favoriteTracks.forEach(track => track.artistId = null)
+
+    const favoriteArtists: ArtistInterface[] = db.findMany("favArtists").filter((artist: ArtistInterface) => artist.id === artistId)
+    favoriteArtists.forEach(artist => db.deleteOne("favArtists", artist.id))
+
     return deletedArtist
   }
 

@@ -42,8 +42,15 @@ export class AlbumsService {
   deleteAlbumById(albumId) {
     db.deleteOne("albums", albumId)
     const album = db.findOne("albums", "id", albumId)
+
     const tracks: TrackInterface[] = db.findMany("tracks").filter((track: TrackInterface) => track.albumId === albumId)
     tracks.forEach(track => track.albumId = null)
+
+    const favoriteTracks = db.findMany("favTracks").filter((track: TrackInterface) => track.albumId === albumId)
+    favoriteTracks.forEach(track => track.albumId = null)
+
+    const favoriteAlbums: AlbumInterface[] = db.findMany("favAlbums").filter((album: AlbumInterface) => album.id === albumId)
+    favoriteAlbums.forEach(album => db.deleteOne("favAlbums", album.id))
 
     return album
   }
