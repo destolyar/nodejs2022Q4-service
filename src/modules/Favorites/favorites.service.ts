@@ -1,7 +1,5 @@
 import db from "src/database/db";
 import { Injectable } from "@nestjs/common";
-import { v4 as uuidv4 } from "uuid"
-import { FavoritesInterface } from './favoritesInterface'
 import { TrackInterface } from "../Tracks/tracksInterface";
 
 @Injectable()

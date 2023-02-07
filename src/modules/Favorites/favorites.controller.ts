@@ -1,5 +1,5 @@
 import { FavoritesService } from './favorites.service';
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { validate as uuidValidate } from 'uuid'
 

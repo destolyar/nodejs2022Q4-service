@@ -45,7 +45,7 @@ export class TracksService {
 
     const favoriteTracks: TrackInterface[] = db.findMany("favTracks").filter((track: TrackInterface) => track.id === trackId)
     favoriteTracks.forEach(track => db.deleteOne("favTracks", track.id))
-    
+
     return deletedTrack
   }
 }

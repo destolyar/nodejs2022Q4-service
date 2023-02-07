@@ -1,6 +1,5 @@
 import { AlbumInterface } from "src/modules/Albums/albumsInterface";
 import { ArtistInterface } from "src/modules/Artists/artiststInterface";
-import { FavoritesInterface } from "src/modules/Favorites/favoritesInterface";
 import { TrackInterface } from "src/modules/Tracks/tracksInterface";
 import { UserInterface } from "src/modules/Users/usersInterface";
 
