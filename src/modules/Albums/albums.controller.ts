@@ -10,13 +10,13 @@ export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) { }
 
   @Get('/')
-  getAlbums(@Res() response: Response) {
-    const albums = this.albumsService.getAlbums()
+  async getAlbums(@Res() response: Response) {
+    const albums = await this.albumsService.getAlbums()
     response.json(albums)
   }
 
   @Get(':id')
-  getUserById(@Param() params, @Res() response: Response) {
+  async getUserById(@Param() params, @Res() response: Response) {
     const albumId = params.id
 
     const isValidId = uuidValidate(albumId)
@@ -24,7 +24,7 @@ export class AlbumsController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const findedAlbums = this.albumsService.getAlbumById(albumId)
+    const findedAlbums = await this.albumsService.getAlbumById(albumId)
     if (!findedAlbums) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
@@ -33,13 +33,13 @@ export class AlbumsController {
   }
 
   @Post('/')
-  createAlbum(@Body() createAlbumDto: CreateAlbumDto, @Res() response: Response) {
-    const createdAlbum = this.albumsService.createAlbum(createAlbumDto)
+  async createAlbum(@Body() createAlbumDto: CreateAlbumDto, @Res() response: Response) {
+    const createdAlbum = await this.albumsService.createAlbum(createAlbumDto)
     response.json(createdAlbum)
   }
 
   @Put(':id')
-  updateAlbum(@Body() updateAlbumDto: UpdateAlbumDto, @Param() params, @Res() response: Response) {
+  async updateAlbum(@Body() updateAlbumDto: UpdateAlbumDto, @Param() params, @Res() response: Response) {
     const albumId = params.id
 
     const isValidId = uuidValidate(albumId)
@@ -47,12 +47,12 @@ export class AlbumsController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const album = this.albumsService.getAlbumById(albumId)
+    const album = await this.albumsService.getAlbumById(albumId)
     if (!album) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    const updatedAlbum = this.albumsService.updateAlbum(updateAlbumDto, albumId, album)
+    const updatedAlbum = await this.albumsService.updateAlbum(updateAlbumDto, albumId, album)
     if (!updatedAlbum) {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
@@ -62,7 +62,7 @@ export class AlbumsController {
 
   @Delete(':id')
   @HttpCode(204)
-  deleteAlbumById(@Param() params, @Res() response: Response) {
+  async deleteAlbumById(@Param() params, @Res() response: Response) {
     const albumId = params.id
 
     const isValidId = uuidValidate(albumId)
@@ -70,7 +70,7 @@ export class AlbumsController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const albumForDeleting = this.albumsService.getAlbumById(albumId)
+    const albumForDeleting = await this.albumsService.getAlbumById(albumId)
     if (!albumForDeleting) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }

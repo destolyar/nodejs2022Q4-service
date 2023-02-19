@@ -8,13 +8,13 @@ export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) { }
 
   @Get('/')
-  getFavs(@Res() response: Response) {
-    const favorites = this.favoritesService.getFavs()
+  async getFavs(@Res() response: Response) {
+    const favorites = await this.favoritesService.getFavs()
     response.json(favorites)
   }
 
   @Post('/track/:id')
-  addTrack(@Param() params, @Res() response: Response) {
+  async addTrack(@Param() params, @Res() response: Response) {
     const trackId = params.id
 
     const isValidId = uuidValidate(trackId)
@@ -22,12 +22,12 @@ export class FavoritesController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const findedTrack = this.favoritesService.getItemById(trackId, "tracks")
+    const findedTrack = await this.favoritesService.getTrackById(trackId)
     if (!findedTrack) {
       throw new HttpException('UNPROCESSABLE_ENTITY', HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    const addedTrack = this.favoritesService.addToFavs(findedTrack, "favTracks")
+    const addedTrack = await this.favoritesService.addFavoriteTrack(findedTrack)
     if (!addedTrack) {
       throw new HttpException('CREATED', HttpStatus.CREATED);
     }
@@ -37,7 +37,7 @@ export class FavoritesController {
 
   @Delete('/track/:id')
   @HttpCode(204)
-  deleteTrack(@Param() params, @Res() response: Response) {
+  async deleteTrack(@Param() params, @Res() response: Response) {
     const trackId = params.id
 
     const isValidId = uuidValidate(trackId)
@@ -45,7 +45,7 @@ export class FavoritesController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const deletedTrack = this.favoritesService.deleteFromFavs(trackId, "favTracks")
+    const deletedTrack = await this.favoritesService.deleteFavoriteTrack(trackId)
     if (!deletedTrack) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
@@ -54,7 +54,7 @@ export class FavoritesController {
   }
 
   @Post('/album/:id')
-  addAlbum(@Param() params, @Res() response: Response) {
+  async addAlbum(@Param() params, @Res() response: Response) {
     const albumId = params.id
 
     const isValidId = uuidValidate(albumId)
@@ -62,12 +62,12 @@ export class FavoritesController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const findedAlbum = this.favoritesService.getItemById(albumId, "albums")
+    const findedAlbum = await this.favoritesService.getAlbumById(albumId)
     if (!findedAlbum) {
       throw new HttpException('UNPROCESSABLE_ENTITY', HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    const addedAlbum = this.favoritesService.addToFavs(findedAlbum, "favAlbums")
+    const addedAlbum = await this.favoritesService.addFavoriteAlbum(findedAlbum)
     if (!addedAlbum) {
       throw new HttpException('CREATED', HttpStatus.CREATED);
     }
@@ -77,7 +77,7 @@ export class FavoritesController {
 
   @Delete('/album/:id')
   @HttpCode(204)
-  deleteAlbum(@Param() params, @Res() response: Response) {
+  async deleteAlbum(@Param() params, @Res() response: Response) {
     const albumId = params.id
 
     const isValidId = uuidValidate(albumId)
@@ -85,7 +85,7 @@ export class FavoritesController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const deletedAlbum = this.favoritesService.deleteFromFavs(albumId, "favAlbums")
+    const deletedAlbum = await this.favoritesService.deleteFavoriteAlbum(albumId)
     if (!deletedAlbum) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
@@ -94,7 +94,7 @@ export class FavoritesController {
   }
 
   @Post('/artist/:id')
-  addArtist(@Param() params, @Res() response: Response) {
+  async addArtist(@Param() params, @Res() response: Response) {
     const artistId = params.id
 
     const isValidId = uuidValidate(artistId)
@@ -102,12 +102,12 @@ export class FavoritesController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const findedArtist = this.favoritesService.getItemById(artistId, "artists")
+    const findedArtist = await this.favoritesService.getArtistById(artistId)
     if (!findedArtist) {
       throw new HttpException('UNPROCESSABLE_ENTITY', HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    const addedArtist = this.favoritesService.addToFavs(findedArtist, "favArtists")
+    const addedArtist = await this.favoritesService.addFavoriteArtist(findedArtist)
     if (!addedArtist) {
       throw new HttpException('CREATED', HttpStatus.CREATED);
     }
@@ -117,7 +117,7 @@ export class FavoritesController {
 
   @Delete('/artist/:id')
   @HttpCode(204)
-  deleteArtist(@Param() params, @Res() response: Response) {
+  async deleteArtist(@Param() params, @Res() response: Response) {
     const artistId = params.id
 
     const isValidId = uuidValidate(artistId)
@@ -125,7 +125,7 @@ export class FavoritesController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const deletedArtist = this.favoritesService.deleteFromFavs(artistId, "favArtists")
+    const deletedArtist = await this.favoritesService.deleteFavoriteArtist(artistId)
     if (!deletedArtist) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }

@@ -1,57 +1,63 @@
-import db from "src/database/db";
 import { Injectable } from "@nestjs/common";
 import { CreateAlbumDto, UpdateAlbumDto } from "./dto";
 import { v4 as uuidv4 } from "uuid"
 import { AlbumInterface } from "./albumsInterface";
 import { TrackInterface } from "../Tracks/tracksInterface";
+import { Albums } from "./albums.entity";
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Tracks } from "../Tracks/tracks.entity";
+import { FavoriteTracks } from "../Favorites/entity/favoriteTracks.entity";
+import { FavoriteAlbums } from "../Favorites/entity/favoriteAlbums.entity";
+
 
 @Injectable()
 export class AlbumsService {
-  getAlbums() {
-    return db.findMany("albums")
-  }
+  @InjectRepository(Albums) private albumsRepository: Repository<Albums>
+  @InjectRepository(Tracks) private tracksRepository: Repository<Tracks>
+  @InjectRepository(FavoriteTracks) private favoriteTracksRepository: Repository<FavoriteTracks>
+  @InjectRepository(FavoriteAlbums) private favoriteAlbumsRepository: Repository<FavoriteAlbums>
 
-  getAlbumById(albumId: string) {
-    const albums = db.findOne("albums", "id", albumId)
+  async getAlbums() {
+    const albums = await this.albumsRepository.find()
     return albums
   }
 
-  createAlbum(createAlbumDto: CreateAlbumDto) {
-    const album = {
+  async getAlbumById(albumId: string) {
+    const album = await this.albumsRepository.findOneBy({ id: albumId })
+    return album
+  }
+
+  async createAlbum(createAlbumDto: CreateAlbumDto) {
+    const albumForInsert = {
       id: uuidv4(),
       ...createAlbumDto,
       artistId: createAlbumDto.artistId,
     }
 
-    db.insertOne("albums", album)
+    await this.albumsRepository.insert(albumForInsert)
 
-    return { ...album }
+    return albumForInsert
   }
 
-  updateAlbum(updateAlbumDto: UpdateAlbumDto, albumId: string, album: AlbumInterface) {
+  async updateAlbum(updateAlbumDto: UpdateAlbumDto, albumId: string, album: AlbumInterface) {
     const updatedAlbum = {
       ...album,
       ...updateAlbumDto
     }
 
-    db.rewriteOne("albums", updatedAlbum, albumId)
+    await this.albumsRepository.update(albumId, updatedAlbum)
 
-    return { ...updatedAlbum }
+    return updatedAlbum
   }
 
-  deleteAlbumById(albumId) {
-    db.deleteOne("albums", albumId)
-    const album = db.findOne("albums", "id", albumId)
+  async deleteAlbumById(albumId) {
+    const deletedAlbum = await this.albumsRepository.delete({ id: albumId })
 
-    const tracks: TrackInterface[] = db.findMany("tracks").filter((track: TrackInterface) => track.albumId === albumId)
-    tracks.forEach(track => track.albumId = null)
+    await this.tracksRepository.createQueryBuilder().update(Tracks).set({ albumId: null }).where({ albumId: albumId }).execute()
+    await this.favoriteTracksRepository.createQueryBuilder().update(FavoriteTracks).set({ albumId: null }).where({ albumId: albumId }).execute()
+    await this.favoriteAlbumsRepository.delete({ id: albumId })
 
-    const favoriteTracks = db.findMany("favTracks").filter((track: TrackInterface) => track.albumId === albumId)
-    favoriteTracks.forEach(track => track.albumId = null)
-
-    const favoriteAlbums: AlbumInterface[] = db.findMany("favAlbums").filter((album: AlbumInterface) => album.id === albumId)
-    favoriteAlbums.forEach(album => db.deleteOne("favAlbums", album.id))
-
-    return album
+    return deletedAlbum
   }
 }

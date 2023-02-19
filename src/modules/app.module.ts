@@ -1,18 +1,49 @@
 import { Module } from '@nestjs/common';
-import { AlbumsService } from './Albums/albums.service';
-import { AlbumsController } from './Albums/albums.controller';
-import { ArtistsController } from './Artists/artists.controller';
-import { FavoritesController } from './Favorites/favorites.controller';
-import { TracksController } from './Tracks/tracks.controller';
-import { UsersController } from './Users/users.controller';
-import { ArtistsService } from './Artists/artists.service';
-import { FavoritesService } from './Favorites/favorites.service';
-import { TracksService } from './Tracks/tracks.service';
-import { UsersService } from './Users/users.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { User } from 'src/modules/Users/user.entity';
+import { UsersModule } from './Users/users.module';
+import { Tracks } from './Tracks/tracks.entity';
+import { Artists } from './Artists/artists.entity';
+import { Albums } from './Albums/albums.entity';
+import { TracksModule } from './Tracks/tracks.module';
+import { FavoritesModule } from './Favorites/favorites.module';
+import { ArtistsModule } from './Artists/artists.module';
+import { AlbumsModule } from './Albums/albums.module';
+import { FavoriteAlbums } from './Favorites/entity/favoriteAlbums.entity';
+import { FavoriteTracks } from './Favorites/entity/favoriteTracks.entity';
+import { FavoriteArtists } from './Favorites/entity/favoriteArtists.entity';
+
 
 @Module({
-  imports: [],
-  controllers: [AlbumsController, ArtistsController, FavoritesController, TracksController, UsersController],
-  providers: [AlbumsService, ArtistsService, FavoritesService, TracksService, UsersService],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: '1234',
+      database: 'postgres',
+      entities: [
+        User,
+        Tracks,
+        Artists,
+        Albums,
+        FavoriteAlbums,
+        FavoriteTracks,
+        FavoriteArtists
+      ],
+      synchronize: true
+    }),
+    UsersModule,
+    TracksModule,
+    FavoritesModule,
+    ArtistsModule,
+    AlbumsModule
+  ],
 })
-export class AppModule {}
+
+
+export class AppModule {
+  constructor(private dataSource: DataSource) { }
+}

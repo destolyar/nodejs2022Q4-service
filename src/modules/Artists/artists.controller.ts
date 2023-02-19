@@ -9,13 +9,13 @@ export class ArtistsController {
   constructor(private readonly artistsService: ArtistsService) { }
 
   @Get('/')
-  getArtists(@Res() response: Response) {
-    const artists = this.artistsService.getArtists()
+  async getArtists(@Res() response: Response) {
+    const artists = await this.artistsService.getArtists()
     response.json(artists)
   }
 
   @Get(':id')
-  getArtistById(@Param() params, @Res() response: Response) {
+  async getArtistById(@Param() params, @Res() response: Response) {
     const artistId = params.id
 
     const isValidId = uuidValidate(artistId)
@@ -23,7 +23,7 @@ export class ArtistsController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const findedArtist = this.artistsService.getArtistById(artistId)
+    const findedArtist = await this.artistsService.getArtistById(artistId)
     if (!findedArtist) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
@@ -32,13 +32,13 @@ export class ArtistsController {
   }
 
   @Post('/')
-  createAlbum(@Body() createArtistDto: CreateArtistDto, @Res() response: Response) {
-    const createdArtist = this.artistsService.createArtist(createArtistDto)
+  async createAlbum(@Body() createArtistDto: CreateArtistDto, @Res() response: Response) {
+    const createdArtist = await this.artistsService.createArtist(createArtistDto)
     response.json(createdArtist)
   }
 
   @Put(':id')
-  updateAlbum(@Body() updateArtistDto: UpdateArtistDto, @Param() params, @Res() response: Response) {
+  async updateAlbum(@Body() updateArtistDto: UpdateArtistDto, @Param() params, @Res() response: Response) {
     const artistId = params.id
 
     const isValidId = uuidValidate(artistId)
@@ -46,12 +46,12 @@ export class ArtistsController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const artist = this.artistsService.getArtistById(artistId)
+    const artist = await this.artistsService.getArtistById(artistId)
     if (!artist) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    const updatedArtist = this.artistsService.updateArtist(updateArtistDto, artistId, artist)
+    const updatedArtist = await this.artistsService.updateArtist(updateArtistDto, artistId, artist)
     if (!updatedArtist) {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
@@ -61,7 +61,7 @@ export class ArtistsController {
 
   @Delete(':id')
   @HttpCode(204)
-  deleteAlbumById(@Param() params, @Res() response: Response) {
+  async deleteAlbumById(@Param() params, @Res() response: Response) {
     const artistId = params.id
 
     const isValidId = uuidValidate(artistId)
@@ -69,13 +69,13 @@ export class ArtistsController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const artistForDeleting = this.artistsService.getArtistById(artistId)
+    const artistForDeleting = await this.artistsService.getArtistById(artistId)
     if (!artistForDeleting) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    this.artistsService.deleteArtistById(artistId)
+    const deletedArtist = await this.artistsService.deleteArtistById(artistId)
 
-    response.json(artistForDeleting)
+    response.json(deletedArtist)
   }
 }
