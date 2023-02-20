@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { User } from 'src/db/entities/user.entity';
 import { UsersModule } from './Users/users.module';
 import { Tracks } from '../db/entities/tracks.entity';
+import { User } from 'src/db/entities/user.entity';
 import { Artists } from '../db/entities/artists.entity';
 import { Albums } from '../db/entities/albums.entity';
 import { TracksModule } from './Tracks/tracks.module';
@@ -14,30 +14,12 @@ import { FavoriteAlbums } from '../db/entities/favoriteAlbums.entity';
 import { FavoriteTracks } from '../db/entities/favoriteTracks.entity';
 import { FavoriteArtists } from '../db/entities/favoriteArtists.entity';
 import 'dotenv/config'
+import { dataSourceOptions } from 'src/configTypeOrmPostgres';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      host: process.env.POSTGRES_HOST,
-      port: +process.env.POSTGRES_PORT,
-      username: process.env.POSTGRES_USERNAME,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
-      entities: [
-        User,
-        Tracks,
-        Artists,
-        Albums,
-        FavoriteAlbums,
-        FavoriteTracks,
-        FavoriteArtists
-      ],
-      migrations: ["dist/db/migrations/**/*{.js,.ts}"],
-      synchronize: false,
-      migrationsRun: true,
-    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     UsersModule,
     TracksModule,
     FavoritesModule,
