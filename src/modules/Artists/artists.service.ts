@@ -4,11 +4,11 @@ import { v4 as uuidv4 } from "uuid"
 import { ArtistInterface } from "./artiststInterface";
 import { TrackInterface } from "../Tracks/tracksInterface";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Artists } from "./artists.entity";
+import { Artists } from "../../db/entities/artists.entity";
 import { Repository, createQueryBuilder } from "typeorm";
-import { FavoriteTracks } from "../Favorites/entity/favoriteTracks.entity";
-import { FavoriteArtists } from "../Favorites/entity/favoriteArtists.entity";
-import { Tracks } from "../Tracks/tracks.entity";
+import { FavoriteTracks } from "../../db/entities/favoriteTracks.entity";
+import { FavoriteArtists } from "../../db/entities/favoriteArtists.entity";
+import { Tracks } from "../../db/entities/tracks.entity";
 
 
 @Injectable()

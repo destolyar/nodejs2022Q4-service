@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { FavoriteAlbums } from "./entity/favoriteAlbums.entity";
-import { FavoriteArtists } from "./entity/favoriteArtists.entity";
-import { FavoriteTracks } from "./entity/favoriteTracks.entity";
+import { FavoriteAlbums } from "../../db/entities/favoriteAlbums.entity";
+import { FavoriteArtists } from "../../db/entities/favoriteArtists.entity";
+import { FavoriteTracks } from "../../db/entities/favoriteTracks.entity";
 import { TrackInterface } from "../Tracks/tracksInterface";
-import { Tracks } from "../Tracks/tracks.entity";
-import { Albums } from "../Albums/albums.entity";
-import { Artists } from "../Artists/artists.entity";
+import { Tracks } from "../../db/entities/tracks.entity";
+import { Albums } from "../../db/entities/albums.entity";
+import { Artists } from "../../db/entities/artists.entity";
 import { AlbumInterface } from "../Albums/albumsInterface";
 import { ArtistInterface } from "../Artists/artiststInterface";
 

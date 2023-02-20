@@ -3,9 +3,9 @@ import { CreateTrackDto, UpdateTrackDto } from "./dto";
 import { v4 as uuidv4 } from "uuid"
 import { TrackInterface } from "./tracksInterface";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Tracks } from "./tracks.entity";
+import { Tracks } from "../../db/entities/tracks.entity";
 import { Repository } from "typeorm";
-import { FavoriteTracks } from "../Favorites/entity/favoriteTracks.entity";
+import { FavoriteTracks } from "../../db/entities/favoriteTracks.entity";
 
 @Injectable()
 export class TracksService {

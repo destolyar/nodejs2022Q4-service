@@ -3,12 +3,12 @@ import { CreateAlbumDto, UpdateAlbumDto } from "./dto";
 import { v4 as uuidv4 } from "uuid"
 import { AlbumInterface } from "./albumsInterface";
 import { TrackInterface } from "../Tracks/tracksInterface";
-import { Albums } from "./albums.entity";
+import { Albums } from "../../db/entities/albums.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Tracks } from "../Tracks/tracks.entity";
-import { FavoriteTracks } from "../Favorites/entity/favoriteTracks.entity";
-import { FavoriteAlbums } from "../Favorites/entity/favoriteAlbums.entity";
+import { Tracks } from "../../db/entities/tracks.entity";
+import { FavoriteTracks } from "../../db/entities/favoriteTracks.entity";
+import { FavoriteAlbums } from "../../db/entities/favoriteAlbums.entity";
 
 
 @Injectable()
