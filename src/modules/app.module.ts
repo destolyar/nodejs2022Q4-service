@@ -1,18 +1,34 @@
 import { Module } from '@nestjs/common';
-import { AlbumsService } from './Albums/albums.service';
-import { AlbumsController } from './Albums/albums.controller';
-import { ArtistsController } from './Artists/artists.controller';
-import { FavoritesController } from './Favorites/favorites.controller';
-import { TracksController } from './Tracks/tracks.controller';
-import { UsersController } from './Users/users.controller';
-import { ArtistsService } from './Artists/artists.service';
-import { FavoritesService } from './Favorites/favorites.service';
-import { TracksService } from './Tracks/tracks.service';
-import { UsersService } from './Users/users.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { UsersModule } from './Users/users.module';
+import { Tracks } from '../db/entities/tracks.entity';
+import { User } from 'src/db/entities/user.entity';
+import { Artists } from '../db/entities/artists.entity';
+import { Albums } from '../db/entities/albums.entity';
+import { TracksModule } from './Tracks/tracks.module';
+import { FavoritesModule } from './Favorites/favorites.module';
+import { ArtistsModule } from './Artists/artists.module';
+import { AlbumsModule } from './Albums/albums.module';
+import { FavoriteAlbums } from '../db/entities/favoriteAlbums.entity';
+import { FavoriteTracks } from '../db/entities/favoriteTracks.entity';
+import { FavoriteArtists } from '../db/entities/favoriteArtists.entity';
+import 'dotenv/config'
+import { dataSourceOptions } from 'src/configTypeOrmPostgres';
+
 
 @Module({
-  imports: [],
-  controllers: [AlbumsController, ArtistsController, FavoritesController, TracksController, UsersController],
-  providers: [AlbumsService, ArtistsService, FavoritesService, TracksService, UsersService],
+  imports: [
+    TypeOrmModule.forRoot(dataSourceOptions),
+    UsersModule,
+    TracksModule,
+    FavoritesModule,
+    ArtistsModule,
+    AlbumsModule
+  ],
 })
-export class AppModule {}
+
+
+export class AppModule {
+  constructor(private dataSource: DataSource) { }
+}

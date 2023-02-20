@@ -1,55 +1,60 @@
-import db from "src/database/db";
 import { Injectable } from "@nestjs/common";
 import { CreateArtistDto, UpdateArtistDto } from "./dto";
 import { v4 as uuidv4 } from "uuid"
 import { ArtistInterface } from "./artiststInterface";
 import { TrackInterface } from "../Tracks/tracksInterface";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Artists } from "../../db/entities/artists.entity";
+import { Repository, createQueryBuilder } from "typeorm";
+import { FavoriteTracks } from "../../db/entities/favoriteTracks.entity";
+import { FavoriteArtists } from "../../db/entities/favoriteArtists.entity";
+import { Tracks } from "../../db/entities/tracks.entity";
 
 
 @Injectable()
 export class ArtistsService {
-  getArtists() {
-    return db.findMany("artists")
-  }
+  @InjectRepository(Artists) private artistsRepository: Repository<Artists>
+  @InjectRepository(Tracks) private tracksRepository: Repository<Tracks>
+  @InjectRepository(FavoriteTracks) private favoriteTracksRepository: Repository<FavoriteTracks>
+  @InjectRepository(FavoriteArtists) private favoriteArtistsRepository: Repository<FavoriteArtists>
 
-  getArtistById(artistId: string) {
-    const artists = db.findOne("artists", "id", artistId)
+
+  async getArtists() {
+    const artists = await this.artistsRepository.find()
     return artists
   }
 
-  createArtist(createArtistDto: CreateArtistDto) {
-    const artist = {
+  async getArtistById(artistId: string) {
+    const artist = await this.artistsRepository.findOneBy({ id: artistId })
+    return artist
+  }
+
+  async createArtist(createArtistDto: CreateArtistDto) {
+    const artistForInsert = {
       id: uuidv4(),
       ...createArtistDto,
     }
 
-    db.insertOne("artists", artist)
-
-    return { ...artist }
+    await this.artistsRepository.insert(artistForInsert)
+    return artistForInsert
   }
 
-  updateArtist(updateArtistDto: UpdateArtistDto, artistId: string, artist: ArtistInterface) {
+  async updateArtist(updateArtistDto: UpdateArtistDto, artistId: string, artist: ArtistInterface) {
     const updatedArtist = {
       ...artist,
       ...updateArtistDto
     }
 
-    db.rewriteOne("artists", updatedArtist, artistId)
-
-    return { ...updatedArtist }
+    await this.artistsRepository.update(artistId, updatedArtist)
+    return updatedArtist
   }
 
-  deleteArtistById(artistId) {
-    const deletedArtist = db.deleteOne("artists", artistId)
-
-    const tracks = db.findMany("tracks").filter((track: TrackInterface) => track.artistId === artistId)
-    tracks.forEach(track => track.artistId = null)
-
-    const favoriteTracks = db.findMany("favTracks").filter((track: TrackInterface) => track.artistId === artistId)
-    favoriteTracks.forEach(track => track.artistId = null)
-
-    const favoriteArtists: ArtistInterface[] = db.findMany("favArtists").filter((artist: ArtistInterface) => artist.id === artistId)
-    favoriteArtists.forEach(artist => db.deleteOne("favArtists", artist.id))
+  async deleteArtistById(artistId) {
+    const deletedArtist = await this.artistsRepository.delete({ id: artistId })
+    
+    await this.tracksRepository.createQueryBuilder().update(Tracks).set({ artistId: null }).where({ artistId: artistId }).execute()
+    await this.favoriteTracksRepository.createQueryBuilder().update(FavoriteTracks).set({ artistId: null }).where({ artistId: artistId }).execute()
+    await this.favoriteArtistsRepository.delete({ id: artistId })
 
     return deletedArtist
   }

@@ -9,14 +9,14 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Get('/')
-  getUsers(@Res() response: Response) {
-    const users = this.usersService.getUsers()
+  async getUsers(@Res() response: Response) {
+    const users = await this.usersService.getUsers()
 
     response.json(users)
   }
 
   @Get(':id')
-  getUserById(@Param() params, @Res() response: Response) {
+  async getUserById(@Param() params, @Res() response: Response) {
     const userId = params.id
 
     const isValidId = uuidValidate(userId)
@@ -24,7 +24,7 @@ export class UsersController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const findedUser = this.usersService.getUserById(userId)
+    const findedUser = await this.usersService.getUserById(userId)
     if (!findedUser) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
@@ -33,16 +33,16 @@ export class UsersController {
   }
 
   @Post('/')
-  createUser(@Body() createUserDto: CreateUserDto, @Res() response: Response) {
-    const createdUser = this.usersService.createUser(createUserDto)
+  async createUser(@Body() createUserDto: CreateUserDto, @Res() response: Response) {
+    const createdUser = await this.usersService.createUser(createUserDto)
     const userWithoutPassword = { ...createdUser }
-    delete userWithoutPassword.password
+    delete userWithoutPassword.password 
 
     response.json(userWithoutPassword)
   }
 
   @Put(':id')
-  updateUserPassword(@Body() updatePasswordDto: UpdatePasswordDto, @Param() params, @Res() response: Response) {
+  async updateUserPassword(@Body() updatePasswordDto: UpdatePasswordDto, @Param() params, @Res() response: Response) {
     const userId = params.id
 
     const isValidId = uuidValidate(userId)
@@ -50,15 +50,16 @@ export class UsersController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const user = this.usersService.getUserById(userId)
+    const user = await this.usersService.getUserById(userId)
     if (!user) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    const updatedUser = this.usersService.updateUserPassword(updatePasswordDto, userId, user)
+    const updatedUser = await this.usersService.updateUserPassword(updatePasswordDto, userId, user)
     if (!updatedUser) {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
+
     const userWithoutPassword = { ...updatedUser }
     delete userWithoutPassword.password
 
@@ -67,7 +68,7 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(204)
-  deleteUserById(@Param() params, @Res() response: Response) {
+  async deleteUserById(@Param() params, @Res() response: Response) {
     const userId = params.id
 
     const isValidId = uuidValidate(userId)
@@ -75,13 +76,13 @@ export class UsersController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const userForDeleting = this.usersService.getUserById(userId)
+    const userForDeleting = await this.usersService.getUserById(userId)
     if (!userForDeleting) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    this.usersService.deleteUserById(userId)
+    const deletedUser = await this.usersService.deleteUserById(userId)
 
-    response.json(userForDeleting)
+    response.json(deletedUser)
   }
 }

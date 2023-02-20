@@ -1,50 +1,53 @@
-import db from "src/database/db";
 import { Injectable } from "@nestjs/common";
 import { CreateTrackDto, UpdateTrackDto } from "./dto";
 import { v4 as uuidv4 } from "uuid"
 import { TrackInterface } from "./tracksInterface";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Tracks } from "../../db/entities/tracks.entity";
+import { Repository } from "typeorm";
+import { FavoriteTracks } from "../../db/entities/favoriteTracks.entity";
 
 @Injectable()
 export class TracksService {
-  getTracks() {
-    return db.findMany("tracks")
+  @InjectRepository(Tracks) private tracksRepository: Repository<Tracks>
+  @InjectRepository(FavoriteTracks) private favoriteTracksRepository: Repository<FavoriteTracks>
+
+  async getTracks() {
+    const tracks = await this.tracksRepository.find()
+    return tracks
   }
 
-  getTrackById(trackId: string) {
-    const track = db.findOne("tracks", "id", trackId)
+  async getTrackById(trackId: string) {
+    const track = await this.tracksRepository.findOneBy({ id: trackId })
     return track
   }
 
-  createTrack(createTrackDto: CreateTrackDto) {
-    const artistId = createTrackDto.artistId
-    const albumId = createTrackDto.albumId
-    const track = {
+  async createTrack(createTrackDto: CreateTrackDto) {
+    const trackForInsert = {
       id: uuidv4(),
       ...createTrackDto,
-      artistId,
-      albumId
+      artistId: createTrackDto.artistId,
+      albumId: createTrackDto.albumId
     }
 
-    db.insertOne("tracks", track)
-
-    return track
+    await this.tracksRepository.insert(trackForInsert)
+    return trackForInsert
   }
 
-  updateTrack(updateTrackDto: UpdateTrackDto, trackId: string, track: TrackInterface) {
+  async updateTrack(updateTrackDto: UpdateTrackDto, trackId: string, track: TrackInterface) {
     const updatedTrack = {
       ...track,
       ...updateTrackDto
     }
-    db.rewriteOne("tracks", updatedTrack, trackId)
+
+    await this.tracksRepository.update(trackId, updatedTrack)
 
     return updatedTrack
   }
 
-  deleteTrackById(trackId) {
-    const deletedTrack = db.deleteOne("tracks", trackId)
-
-    const favoriteTracks: TrackInterface[] = db.findMany("favTracks").filter((track: TrackInterface) => track.id === trackId)
-    favoriteTracks.forEach(track => db.deleteOne("favTracks", track.id))
+  async deleteTrackById(trackId) {
+    const deletedTrack = await this.tracksRepository.delete({ id: trackId })
+    await this.favoriteTracksRepository.delete({ id: trackId })
 
     return deletedTrack
   }

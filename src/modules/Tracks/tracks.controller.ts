@@ -9,14 +9,14 @@ export class TracksController {
   constructor(private readonly tracksService: TracksService) { }
 
   @Get('/')
-  getTracks(@Res() response: Response) {
-    const tracks = this.tracksService.getTracks()
+  async getTracks(@Res() response: Response) {
+    const tracks = await this.tracksService.getTracks()
 
     response.json(tracks)
   }
 
   @Get(':id')
-  getUserById(@Param() params, @Res() response: Response) {
+  async getTrackById(@Param() params, @Res() response: Response) {
     const trackId = params.id
 
     const isValidId = uuidValidate(trackId)
@@ -24,7 +24,7 @@ export class TracksController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const findedTracks = this.tracksService.getTrackById(trackId)
+    const findedTracks = await this.tracksService.getTrackById(trackId)
     if (!findedTracks) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
@@ -33,13 +33,13 @@ export class TracksController {
   }
 
   @Post('/')
-  createTrack(@Body() createTrackDto: CreateTrackDto, @Res() response: Response) {
-    const createdTrack = this.tracksService.createTrack(createTrackDto)
+  async createTrack(@Body() createTrackDto: CreateTrackDto, @Res() response: Response) {
+    const createdTrack = await this.tracksService.createTrack(createTrackDto)
     response.json(createdTrack)
   }
 
   @Put(':id')
-  updateTrack(@Body() updateTrackDto: UpdateTrackDto, @Param() params, @Res() response: Response) {
+  async updateTrack(@Body() updateTrackDto: UpdateTrackDto, @Param() params, @Res() response: Response) {
     const trackId = params.id
 
     const isValidId = uuidValidate(trackId)
@@ -47,12 +47,12 @@ export class TracksController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const track = this.tracksService.getTrackById(trackId)
+    const track = await this.tracksService.getTrackById(trackId)
     if (!track) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    const updatedTrack = this.tracksService.updateTrack(updateTrackDto, trackId, track)
+    const updatedTrack = await this.tracksService.updateTrack(updateTrackDto, trackId, track)
     if (!updatedTrack) {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
@@ -62,7 +62,7 @@ export class TracksController {
 
   @Delete(':id')
   @HttpCode(204)
-  deleteUserById(@Param() params, @Res() response: Response) {
+  async deleteUserById(@Param() params, @Res() response: Response) {
     const trackId = params.id
 
     const isValidId = uuidValidate(trackId)
@@ -70,13 +70,13 @@ export class TracksController {
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     }
 
-    const trackForDeleting = this.tracksService.getTrackById(trackId)
+    const trackForDeleting = await this.tracksService.getTrackById(trackId)
     if (!trackForDeleting) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    this.tracksService.deleteTrackById(trackId)
+    const deletedTrack = await this.tracksService.deleteTrackById(trackId)
 
-    response.json(trackForDeleting)
+    response.json(deletedTrack)
   }
 }
